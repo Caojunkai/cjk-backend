@@ -31,4 +31,36 @@ class Controller extends BaseController
         return $result;
     }
 
+    public function failure($code = 666666,$errors,$status = 520){
+        $result = [
+            'code' => $code
+        ];
+        if ($errors){
+            $result['error'] = $errors;
+        }
+        return response($result,$status);
+    }
+
+
+    public function formatResponseMsg($code = 666666){
+        $msg = trans('code.'.$code);
+        if (!is_array($msg)){
+            return response(['code'=> 666666,'msg'=>'未知错误'],520);
+        }
+        $result = [
+            'code' => $code,
+            'msg'  => $msg['msg']
+        ];
+        return response($result,$msg['status']);
+    }
+
+    public function success($data = ''){
+        $result = [
+            'code' => 0,
+        ];
+        if ($data)
+            $result['msg'] = $data;
+        return response($result);
+    }
+
 }

@@ -17,6 +17,13 @@ use Illuminate\Http\Request;
 //    return $request->user();
 //})->middleware('auth:api');
 Route::group(['namespace' => 'Home'],function (){
-    Route::get('/',function (){return view('welcome');});
-    Route::post('/register','AccountController@register');
+    Route::any('/',function (){return view('welcome');});
+    Route::post('/account/register','AccountController@register');
+    Route::post('/account/login','AccountController@login');
+    Route::put('/account/profile','AccountController@updateProfile');
+    Route::get('/account/getProfile','AccountController@getProfile');
+    Route::post('/account/logout','AccountController@logout');
+    Route::put('/account/pwdReset','AccountController@pwdReset');
+    Route::post('/account/pwdResetByEmail','AccountController@pwdResetByEmail');
+    Route::put('/account/pwdModify','AccountController@pwdModify');
 });

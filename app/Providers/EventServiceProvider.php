@@ -16,8 +16,11 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\SomeEvent' => [
             'App\Listeners\EventListener',
         ],
-        'App\Events\OrderShipped' => [
-            'App\Listeners\SendShipmentNotification',
+        'Illuminate\Database\Events\QueryExecuted' => [
+            'App\Listeners\QueryListener'
+        ],
+        'App\Events\LogEvent' => [
+            'App\Listeners\LogListener'
         ],
     ];
 

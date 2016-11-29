@@ -2,28 +2,45 @@
 
 namespace App\Http\Models;
 
-use Illuminate\Notifications\Notifiable;
+use Auth;
+use Carbon\Carbon;
+use Validator;
+
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+define('GENDER_UNSPECIFIED', 'unspecified');
+define('GENDER_SECRECY', 'secrecy');
+define('GENDER_MALE', 'male');
+define('GENDER_FEMALE', 'female');
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use SoftDeletes;
 
-    /*
-     * 添加数据库里不存在的字段
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
      */
-    protected $appends = ['followed'];
+    protected $appends = [
+        'followed',
+    ];
 
-    /*
-     * 类型转换
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
      */
     protected $casts = [
         'use_gravatar' => 'boolean',
-        'site_admin' => 'boolean'
+        'site_admin' => 'boolean',
     ];
 
-    /*
-     * 黑名单
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
      */
     protected $guarded = [];
 
@@ -45,5 +62,75 @@ class User extends Authenticatable
         'deleted_at',
     ];
 
+    public function getNameAttribute()
+    {
+        if (!$this->attributes['name']) {
+            return $this->attributes['username'];
+        }
+        return $this->attributes['name'];
+    }
+
+    public function getAgeAttribute()
+    {
+        $age = $this->attributes['age'];
+        $birthday = $this->attributes['birthday'];
+
+        $rules = ['birthday' => 'required|date_format:Y-m-d|before:today'];
+
+        $validator = Validator::make(['birthday' => $birthday], $rules);
+
+        if (!$validator->fails()) {
+            $today = Carbon::today();
+            $birthday_dt = Carbon::createFromFormat('Y-m-d', $birthday);
+            $age = $today->diffInYears($birthday_dt);
+        }
+        return $age;
+    }
+
+    public function getFollowedAttribute()
+    {
+        if (Auth::check()) {
+            if (Auth::id() == $this->id) {
+                return true;
+            }
+            return UserRelationship::where([
+                'user_id' => Auth::id(),
+                'target_user_id' => $this->id
+            ])->exists();
+        }
+        return false;
+    }
+
+    // 使用Gravatar
+    public function useGravatar($use_gravatar, &$params = [])
+    {
+        $this->use_gravatar = $use_gravatar;
+        if ($use_gravatar) {
+            $this->avatar_url = "https://cn.gravatar.com/avatar/" . md5(strtolower(trim($this->email)));
+        } else {
+            $this->avatar_url = $params['avatar_url'];
+        }
+        unset($params);
+    }
+
+    public function configs()
+    {
+        return $this->hasMany('App\Http\Models\UserConfig');
+    }
+
+    public function topics()
+    {
+        return $this->hasMany('App\Http\Models\Topic');
+    }
+
+    public function articles()
+    {
+        return $this->hasMany('App\Http\Models\Article');
+    }
+
+    public function assets()
+    {
+        return $this->hasMany('App\Http\Models\Asset', 'target_id')->where('target_type', 'article');
+    }
 
 }
