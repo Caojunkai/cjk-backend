@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,12 +16,12 @@ use Illuminate\Http\Request;
 //})->middleware('auth:api');
 Route::group(['namespace' => 'Home'],function (){
     Route::any('/',function (){return view('welcome');});
-    Route::post('/account/register','AccountController@register');
-    Route::post('/account/login','AccountController@login');
-    Route::put('/account/profile','AccountController@updateProfile');
-    Route::get('/account/getProfile','AccountController@getProfile');
-    Route::post('/account/logout','AccountController@logout');
-    Route::put('/account/pwdReset','AccountController@pwdReset');
-    Route::post('/account/pwdResetByEmail','AccountController@pwdResetByEmail');
-    Route::put('/account/pwdModify','AccountController@pwdModify');
+    Route::post('/account/user','AccountController@register');//注册
+    Route::put('/account/user/token','AccountController@login');//登录
+    Route::delete('/account/user/token','AccountController@logout');//登出
+    Route::put('/account/user','AccountController@updateProfile');//修改信息
+    Route::get('/account/user','AccountController@getProfile');//获取信息
+    Route::post('/account/pwd','AccountController@pwdReset');//重置密码发送邮件
+    Route::patch('/account/pwd','AccountController@pwdResetByEmail');//重置密码
+    Route::put('/account/pwd','AccountController@pwdModify');//修改密码
 });

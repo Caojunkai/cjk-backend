@@ -31,7 +31,7 @@ class JWTAuthenticate extends BaseMiddleware
         }
         if (!$user)
             return $this->respond(new LogEvent($request),400001);
-
+        $this->events->fire('tymon.jwt.valid', $user);
         return $next($request);
     }
 
@@ -44,7 +44,7 @@ class JWTAuthenticate extends BaseMiddleware
         if (!is_array($msg))
             $msg = trans('code.666666');
         $result = [
-            'code' => $error,
+            'code' => -1,
             'msg'  => trans('code.'.$error)['msg']
         ];
         return $response ?: $this->response->json($result, $msg['status']);

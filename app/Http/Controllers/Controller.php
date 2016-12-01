@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 
 class Controller extends BaseController
 {
@@ -16,7 +20,7 @@ class Controller extends BaseController
     {
         $result = [
             'code'    => -1,
-            'message' => 'Validation Failed',
+            'msg' => 'Validation Failed',
             'errors'  => [],
         ];
         $errors = $validator->errors()->messages();
@@ -31,9 +35,9 @@ class Controller extends BaseController
         return $result;
     }
 
-    public function failure($code = 666666,$errors,$status = 520){
+    public function failure($errors,$status = 520){
         $result = [
-            'code' => $code
+            'code' => -1
         ];
         if ($errors){
             $result['error'] = $errors;
@@ -45,10 +49,10 @@ class Controller extends BaseController
     public function formatResponseMsg($code = 666666){
         $msg = trans('code.'.$code);
         if (!is_array($msg)){
-            return response(['code'=> 666666,'msg'=>'未知错误'],520);
+            return response(['code'=> -1,'msg'=>'未知错误'],520);
         }
         $result = [
-            'code' => $code,
+            'code' => -1,
             'msg'  => $msg['msg']
         ];
         return response($result,$msg['status']);
@@ -61,6 +65,17 @@ class Controller extends BaseController
         if ($data)
             $result['msg'] = $data;
         return response($result);
+    }
+
+    public function refreshToken(Request $request){
+        try {
+            $newToken = JWTAuth::parseToken()->refresh();
+        } catch (TokenExpiredException $e) {
+            return $this->formatResponseMsg(410001);
+        } catch (JWTException $e) {
+            return $this->formatResponseMsg(410002);
+        }
+        return $newToken;
     }
 
 }

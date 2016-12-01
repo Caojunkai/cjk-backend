@@ -108,7 +108,7 @@ class User extends Authenticatable
         if ($use_gravatar) {
             $this->avatar_url = "https://cn.gravatar.com/avatar/" . md5(strtolower(trim($this->email)));
         } else {
-            $this->avatar_url = $params['avatar_url'];
+            $this->avatar_url = isset($params['avatar_url']) ? $params['avatar_url'] : 'http://oddfkdiaf.bkt.clouddn.com/avatar_fitz.png';
         }
         unset($params);
     }

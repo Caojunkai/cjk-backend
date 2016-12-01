@@ -7,12 +7,15 @@ use App\Http\Requests\BaseRequest;
 use App\Http\Controllers\Controller;
 use App\Jobs\SendReminderEmail;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use JWTAuth;
 use Auth;
-use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
+use DB;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 class AccountController extends Controller
 {
@@ -100,11 +103,10 @@ class AccountController extends Controller
         $use_gravatar = in_array($request->input('use_gravatar'), ['true', 'on', '1']);
         $user = User::find(Auth::id());
         $user->useGravatar($use_gravatar, $params);
-        dd($user->withJson());
         if ($user->update($params)) {
             return $this->success($user);
         }
-        return $this->failure();
+        return $this->formatResponseMsg(500007);
     }
 
     public function getProfile(Request $request){
@@ -124,14 +126,18 @@ class AccountController extends Controller
     public function pwdResetByEmail(Request $request){
         $rules = [
             'email' => 'required|email|exists:users',
-            'verify' => 'required|between:6,6'
+            'verify' => 'required|between:6,6',
+            'password' => 'required|between:6,32'
         ];
         $this->validate($request,$rules);
         $email = $request->input('email');
         if (Redis::get($email) == $request->input('verify')){
             $user = User::where('email','=',$email)->first();
-            $token = JWTAuth::fromUser($user);
-            return $this->success($token);
+            JWTAuth::invalidate(JWTAuth::fromUser($user));
+            if ($user->update(['password' => bcrypt($request->input('pwd'))])){
+                return $this->login($request);
+            }
+            return $this->formatResponseMsg(500006);
         }
         return $this->formatResponseMsg(400003);
     }
@@ -152,12 +158,23 @@ class AccountController extends Controller
             return $this->formatResponseMsg(400004);
         }
         $newPwd = bcrypt($newPwd);
-        $user = User::find(Auth::id());
-        if ($user->update(['password' => $newPwd])){
-            return $this->success($user);
+        try {
+            $newToken = DB::transaction(function () use ($newPwd) {
+                if (DB::table('users')->where('id', Auth::id())->update(['password' => $newPwd])) {
+                    return JWTAuth::parseToken()->refresh();
+                }
+                return false;
+            });
+        } catch (TokenInvalidException $e) {
+            return $this->formatResponseMsg(420002);
+        } catch (TokenExpiredException $e){
+            return $this->formatResponseMsg(420001);
+        } catch (Exception $e){
+            return $this->formatResponseMsg(500006);
         }
+        if ($newToken)
+            return $this->success($newToken);
         return $this->formatResponseMsg(500006);
-
     }
 
 }
