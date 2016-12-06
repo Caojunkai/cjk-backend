@@ -24,7 +24,6 @@ class LogEvent
     {
         $this->request = $request;
     }
-
     /**
      * Get the channels the event should broadcast on.
      *
