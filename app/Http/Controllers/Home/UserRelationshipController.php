@@ -33,7 +33,7 @@ class UserRelationshipController extends Controller
         $request->merge(['uid' => $id]);
         $action = $request->input('action');
         $rules = [
-            'user'   => 'exists:users,id',
+            'uid'   => 'exists:users',
             'action' =>'required|in:follow,unfollow'
         ];
         $this->validate($request,$rules);
