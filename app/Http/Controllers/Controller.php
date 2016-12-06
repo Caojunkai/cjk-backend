@@ -4,13 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 
 class Controller extends BaseController
 {
@@ -67,15 +63,21 @@ class Controller extends BaseController
         return response($result);
     }
 
-    public function refreshToken(Request $request){
-        try {
-            $newToken = JWTAuth::parseToken()->refresh();
-        } catch (TokenExpiredException $e) {
-            return $this->formatResponseMsg(410001);
-        } catch (JWTException $e) {
-            return $this->formatResponseMsg(410002);
+    public function pagination($data = ''){
+        $result = [
+            'code' => 0,
+            'pagination' => null,
+            'data' => null
+        ];
+        if ($data){
+            $data = $data->toArray();
+            $result['data'] = $data['data'];
+            unset($data['data']);
+            unset($data['prev_page_url']);
+            unset($data['next_page_url']);
+            $result['pagination'] = $data;
         }
-        return $newToken;
+        return response($result);
     }
 
 }

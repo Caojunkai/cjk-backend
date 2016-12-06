@@ -24,4 +24,12 @@ Route::group(['namespace' => 'Home'],function (){
     Route::post('/account/pwd','AccountController@pwdReset');//重置密码发送邮件
     Route::patch('/account/pwd','AccountController@pwdResetByEmail');//重置密码
     Route::put('/account/pwd','AccountController@pwdModify');//修改密码
+    //============================Users===================================
+    Route::resource('/users','UserController');
+    Route::get('/users/{user_id}/topics','UserController@getTopics');
+    Route::get('/users/{user_id}/following','UserRelationshipController@getFollowing');
+    Route::get('/users/{user_id}/followers','UserRelationshipController@followers');
+    Route::get('/users/{user_id}/subscribes','UserController@subscribes');
+    Route::get('/users/{user_id}/upvotes','UserController@upvotes');
+    Route::post('/users/{user_id}/following','UserRelationshipController@following');
 });

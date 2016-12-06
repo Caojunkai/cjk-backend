@@ -41,12 +41,12 @@ class UserRelationship extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\Models\User');
+        return $this->belongsTo('App\Http\Models\User');
     }
 
     public function target_user()
     {
-        return $this->belongsTo('App\Models\User', 'target_user_id');
+        return $this->belongsTo('App\Http\Models\User', 'target_user_id');
     }
 
 }

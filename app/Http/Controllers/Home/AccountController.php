@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Home;
 
+use App\Events\ShippingStatusUpdated;
 use App\Http\Models\User;
 use App\Http\Requests\BaseRequest;
 use App\Http\Controllers\Controller;
@@ -32,8 +33,14 @@ class AccountController extends Controller
             ]
         ]);
     }
-
-    public function register(BaseRequest $request){
+    //TODO 注册时邮箱验证
+    public function register(Request $request){
+        $rules = [
+            'username' => 'required|between:4,32|alpha_dash|unique:users',
+            'email'    => 'required|email|unique:users',
+            'password' => 'required|between:6,32',
+        ];
+        $this->validate($request, $rules);
         $use_gravatar = true;
         $params = $request->only('username', 'email', 'password');
         $params['password'] = bcrypt($params['password']);
@@ -111,6 +118,7 @@ class AccountController extends Controller
 
     public function getProfile(Request $request){
         $data = User::find(Auth::id());
+        event(new ShippingStatusUpdated(666));
         return $this->success($data);
     }
 

@@ -57,22 +57,22 @@ class Article extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\Models\User');
+        return $this->belongsTo('App\Http\Models\User');
     }
 
     public function topic()
     {
-        return $this->belongsTo('App\Models\Topic');
+        return $this->belongsTo('App\Http\Models\Topic');
     }
 
     public function tags()
     {
-        return $this->hasMany('App\Models\ArticleTag');
+        return $this->hasMany('App\Http\Models\ArticleTag');
     }
 
     public function assets()
     {
-        return $this->hasMany('App\Models\Asset', 'target_id')->where('target_type', 'article');
+        return $this->hasMany('App\Http\Models\Asset', 'target_id')->where('target_type', 'article');
     }
 
 }

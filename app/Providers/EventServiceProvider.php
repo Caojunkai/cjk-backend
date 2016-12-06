@@ -22,6 +22,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\LogEvent' => [
             'App\Listeners\LogListener'
         ],
+        'App\Events\ShippingStatusUpdated' =>[
+              'App\Listeners\ShippingStatusUpdatedListener',
+        ],
     ];
 
     /**
