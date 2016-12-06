@@ -15,7 +15,8 @@ class UserRelationshipController extends Controller
     {
         $this->middleware('jwt.auth', [
             'except' => [
-                'getFollowing'
+                'getFollowing',
+                'getFollowers'
             ]
         ]);
     }
@@ -33,7 +34,7 @@ class UserRelationshipController extends Controller
         $request->merge(['uid' => $id]);
         $action = $request->input('action');
         $rules = [
-            'uid'   => 'exists:users',
+            'uid'   => 'exists:users,id',
             'action' =>'required|in:follow,unfollow'
         ];
         $this->validate($request,$rules);
@@ -66,5 +67,11 @@ class UserRelationshipController extends Controller
             return $this->formatResponseMsg();
         }
         return $this->success();
+    }
+
+    public function getFollowers(Request $request,$id){
+        $followers = UserRelationship::with('user')->where('target_user_id',$id)->orderBy('updated_at','desc')->paginate();
+        return $this->pagination($followers);
+
     }
 }

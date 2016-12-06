@@ -28,7 +28,7 @@ Route::group(['namespace' => 'Home'],function (){
     Route::resource('/users','UserController');
     Route::get('/users/{user_id}/topics','UserController@getTopics');
     Route::get('/users/{user_id}/following','UserRelationshipController@getFollowing');
-    Route::get('/users/{user_id}/followers','UserRelationshipController@followers');
+    Route::get('/users/{user_id}/followers','UserRelationshipController@getFollowers');
     Route::get('/users/{user_id}/subscribes','UserController@subscribes');
     Route::get('/users/{user_id}/upvotes','UserController@upvotes');
     Route::post('/users/{user_id}/following','UserRelationshipController@following');
