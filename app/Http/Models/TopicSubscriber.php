@@ -41,11 +41,11 @@ class TopicSubscriber extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\Models\User');
+        return $this->belongsTo('App\Http\Models\User');
     }
 
     public function topic()
     {
-        return $this->belongsTo('App\Models\Topic');
+        return $this->belongsTo('App\Http\Models\Topic');
     }
 }

@@ -56,12 +56,12 @@ class Topic extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\Models\User');
+        return $this->belongsTo('App\Http\Models\User');
     }
 
     public function assets()
     {
-        return $this->hasMany('App\Models\Asset', 'target_id')->where('target_type', 'topic');
+        return $this->hasMany('App\Http\Models\Asset', 'target_id')->where('target_type', 'topic');
     }
 
 }

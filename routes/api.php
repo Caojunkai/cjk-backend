@@ -32,4 +32,17 @@ Route::group(['namespace' => 'Home'],function (){
     Route::get('/users/{user_id}/subscribes','UserController@subscribes');
     Route::get('/users/{user_id}/upvotes','UserController@upvotes');
     Route::post('/users/{user_id}/following','UserRelationshipController@following');
+    //===========================categories=================================
+    Route::resource('/categories','CategoryController');
+    Route::get('/categories/{cate_id}/topics','CategoryController@topics');
+    Route::get('/categories/{cate_id}/articles','CategoryController@articles');
+    //===========================topics=================================
+    Route::resource('/topics','TopicController');
+//    Route::get('/topics/last','TopicController@last');
+//    Route::get('/topics/popular','TopicController@popular');
+    Route::get('/topics/{topic_id}/articles','TopicController@articles');
+    //===========================topics-subscriber=================================
+    Route::get('/topics/{topic_id}/subscribers','TopicSubscribeController@subscribers');
+    Route::post('/topics/{topic_id}/subscribe','TopicSubscribeController@subscribe');
+    Route::post('/topics/{topic_id}/unsubscribe','TopicSubscribeController@unsubscribe');
 });
