@@ -67,12 +67,16 @@ class Article extends Model
 
     public function tags()
     {
-        return $this->hasMany('App\Http\Models\ArticleTag');
+        return $this->belongsToMany('App\Http\Models\Tag');
     }
 
     public function assets()
     {
         return $this->hasMany('App\Http\Models\Asset', 'target_id')->where('target_type', 'article');
+    }
+
+    public function votes(){
+        return $this->hasMany('App\Http\Models\ArticleVote');
     }
 
 }

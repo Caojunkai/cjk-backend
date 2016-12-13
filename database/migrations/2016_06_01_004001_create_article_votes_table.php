@@ -16,7 +16,6 @@ class CreateArticleVotesTable extends Migration
             $table->increments('id');
             $table->integer('user_id');     // 用户Id
             $table->integer('article_id');  // 文章Id
-            $table->string('type');         // 类型[un, down]
             $table->softDeletes();
             $table->timestamps();
         });

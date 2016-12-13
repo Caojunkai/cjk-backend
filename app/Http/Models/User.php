@@ -133,4 +133,7 @@ class User extends Authenticatable
         return $this->hasMany('App\Http\Models\Asset', 'target_id')->where('target_type', 'article');
     }
 
+    public function votes(){
+        return $this->hasMany('App\Http\Models\ArticleVote');
+    }
 }

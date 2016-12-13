@@ -45,4 +45,8 @@ Route::group(['namespace' => 'Home'],function (){
     Route::get('/topics/{topic_id}/subscribers','TopicSubscribeController@subscribers');
     Route::post('/topics/{topic_id}/subscribe','TopicSubscribeController@subscribe');
     Route::post('/topics/{topic_id}/unsubscribe','TopicSubscribeController@unsubscribe');
+    //===========================articles======================================
+    Route::resource('/articles','ArticleController');
+    Route::resource('/articles/{article_id}/votes','ArticleVoteController');
+    Route::resource('/articles/{article_id}/comments','ArticleCommentController');
 });

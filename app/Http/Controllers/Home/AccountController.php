@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Home;
 
 use App\Events\ShippingStatusUpdated;
 use App\Http\Models\User;
-use App\Http\Requests\BaseRequest;
 use App\Http\Controllers\Controller;
 use App\Jobs\SendReminderEmail;
 use Carbon\Carbon;
@@ -13,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use JWTAuth;
 use Auth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 use DB;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
@@ -71,7 +71,7 @@ class AccountController extends Controller
                 return $this->formatResponseMsg(500001);
             $user->jwt_token = [
                 'access_token ' => $token,
-                'expires_in' => Carbon::now()->addMinutes(config('jwt.ttl'))->timestamp
+                'expires_in' => Carbon::now()->addMinutes(env('JWT_TTL'))->timestamp
             ];
             return $this->success($user);
         } catch (JWTException $e) {

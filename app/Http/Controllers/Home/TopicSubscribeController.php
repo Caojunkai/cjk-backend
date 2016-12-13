@@ -8,7 +8,7 @@ use Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class TopicSubscriberController extends Controller
+class TopicSubscribeController extends Controller
 {
     public function __construct()
     {
