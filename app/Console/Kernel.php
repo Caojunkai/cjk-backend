@@ -24,7 +24,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-         $schedule->exec('more /wwwroot/cjkbe/storage/logs/laravel.log >> /wwwroot/test.log')->cron('1 * * * * ');
+         $schedule->exec('more /wwwroot/cjkbe/storage/logs/laravel.log >> /wwwroot/test.log')->cron('*/1 * * * * ');
     }
 
     /**
