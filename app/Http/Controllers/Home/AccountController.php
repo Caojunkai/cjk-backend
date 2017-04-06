@@ -107,9 +107,7 @@ class AccountController extends Controller
         ];
         $this->validate($request, $rules);
         $params = $request->except('username', 'email', 'mobile', 'password', 'use_gravatar');
-        $use_gravatar = in_array($request->input('use_gravatar'), ['true', 'on', '1']);
         $user = User::find(Auth::id());
-        $user->useGravatar($use_gravatar, $params);
         if ($user->update($params)) {
             return $this->success($user);
         }
