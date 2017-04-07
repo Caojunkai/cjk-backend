@@ -2,13 +2,25 @@
 
 namespace App\Http\Controllers\Home;
 
+use App\Http\Models\Category;
+use App\Http\Models\Topic;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class CategoryController extends Controller
 {
-
-
+    //执行jwt认证
+    public function __construct()
+    {
+        $this->middleware('jwt.auth',[
+            'except' => [
+                'index',
+                'show',
+                'topics',
+                'articles',
+            ]
+        ]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -16,7 +28,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-
+        $query = Category::orderBy('created_at','asc');
+        return $this->pagination($query->paginate());
     }
 
     /**
@@ -27,17 +40,23 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-
+        return $this->failure(400005);
     }
+
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param  int                     $id
+     *
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request,$id)
     {
-
+        $request->merge(['category' => $id]);
+        $this->validate($request,['category' => 'exists:categories,id']);
+        $data = Category::find($id);
+        return $this->success($data);
     }
 
     /**
@@ -48,7 +67,7 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        //
+        //TODO
     }
 
     /**
@@ -60,7 +79,7 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        //TODO
     }
 
     /**
@@ -71,6 +90,11 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        //TODO
+    }
+
+    public function topics(Request $request,$id){
+        $query = Topic::where('category_id',$id);
+        return $this->pagination($query->paginate());
     }
 }

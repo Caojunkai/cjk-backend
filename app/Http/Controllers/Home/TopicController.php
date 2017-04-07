@@ -109,6 +109,7 @@ class TopicController extends Controller
         echo "现在不能删除topic";
     }
 
+
     public function articles(Request $request, $id)
     {
         $request->merge(['topic' => $id]);
@@ -116,6 +117,7 @@ class TopicController extends Controller
         $articles = Article::where('topic_id', $id)->orderby('created_at', 'desc')->paginate();
         return $this->pagination($articles);
     }
+
 
 
 }
