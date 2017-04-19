@@ -183,7 +183,7 @@ return [
         /*
          * dev
          */
-        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+        // Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
     ],
 
     /*
